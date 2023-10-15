@@ -1,0 +1,718 @@
+<?php
+
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BaiVietController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ChucVuController;
+use App\Http\Controllers\DanhGiaController;
+use App\Http\Controllers\DanhMucController;
+use App\Http\Controllers\DiaChiConTroller;
+use App\Http\Controllers\DonHangController;
+use App\Http\Controllers\GiamGiaSanPhamController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\KhachHangController;
+use App\Http\Controllers\KhuyenMaiController;
+use App\Http\Controllers\SanPhamController;
+use App\Http\Controllers\SlideController;
+use App\Http\Controllers\TheLoaiBaiVietController;
+use App\Http\Controllers\ThuongHieuController;
+use App\Models\Cart;
+use App\Models\DanhGia;
+use App\Models\GiamGiaSanPham;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+// front-end là phương thức get bên phía ng dùng
+Route::get('/', [
+    HomeController::class,
+    'home'
+]);
+Route::get('/trangchu', [
+    HomeController::class,
+    'home'
+]);
+
+//Lấy sản phẩm theo thương hiệu và danh mục
+Route::get('/thuonghieu/{id}',[
+    HomeController::class,
+    'laysanphamtheothuonghieu'
+]);
+Route::get('kiemtrathongbao',[
+    HomeController::class,
+    'kiemtrathongbao'
+]);
+Route::get('/danhmuc/{id}/{trang}',[
+    HomeController::class,
+    'laysanphamtheodanhmuc'
+]);
+Route::get('hiensanphamgiamgia',[
+    HomeController::class,
+    'hiensanphamgiamgia'
+]);
+//lấy chi tiết sản phẩm
+Route::get('/chitietsanpham/{id}',[
+    HomeController::class,
+    'chitietsanpham'
+]);
+Route::get('laygiatientutenphuong/{id}',[
+    HomeController::class,
+    'laygiatientutenphuong'
+]);
+Route::get('momo',[
+    HomeController::class,
+    'momo'
+]);
+Route::get('resultmomo',[
+    HomeController::class,
+    'resultmomo'
+]);
+//xem giỏ hàng()
+Route::get('/giohang',[
+    CartController::class,
+    'xemgiohang'
+]);
+Route::group(['prefix'=>'thongbao','middleware'=>'khachhang'],function(){
+    Route::group(['prefix'=>'taikhoan'],function(){
+        Route::get('xemthongtin',[
+            HomeController::class,
+            'xemthongtin'
+        ]);
+        Route::post('xemthongtin',[
+            HomeController::class,
+            'postxemthongtin'
+        ]);
+        Route::get('doimatkhau',[
+            HomeController::class,
+            'doimatkhau'
+        ]);
+        Route::post('doimatkhau',[
+            HomeController::class,
+            'postdoimatkhau'
+        ]);
+    });
+    Route::get('tatca',[
+        HomeController::class,
+        'tatca'
+    ]);
+    Route::get('/{id}',[
+        HomeController::class,
+        'thongbao'
+    ]);
+    Route::group(['prefix'=>'donhang'],function(){
+        Route::get('tatca',[
+            HomeController::class,
+            'tatcadonhang'
+        ]);
+        
+        Route::get("danhgia",[
+            HomeController::class,
+            'danhgiadonhang'
+        ]);
+        Route::get("xemdanhgia",[
+            HomeController::class,
+            'xemdanhgiadonhang'
+        ]);
+        Route::get("/{id}",[
+            HomeController::class,
+            'hiendonhang'
+        ]);
+        Route::get('xoadanhgia/{id}',[
+            HomeController::class,
+            'xoadanhgia'
+        ]);
+        Route::get('suadanhgia/{id}/{idsanpham}',[
+            HomeController::class,
+            'suadanhgia'
+        ]);
+        Route::post('suadanhgia/{id}/{idsanpham}',[
+            HomeController::class,
+            'postsuadanhgia'
+        ]);
+    });
+});
+Route::post('giohang/themvaogio/{id}',[
+    CartController::class,
+    'themvaogio'
+]);
+Route::get('giohang/themvaogio/{id}',[
+    CartController::class,
+    'themvaogio'
+]);
+Route::get('giohang/themgiamgiavaogio/{id}',[
+    CartController::class,
+    'themgiamgiavaogio'
+]);
+Route::get('giohang/trugiohang/{id}',[
+    CartController::class,
+    'trugiohang'
+]);
+Route::get('giohang/xoagiohang/{id}',[
+    CartController::class,
+    'xoagiohang'
+]);
+Route::get('giohang/xoagiamgiagiohang/{id}',[
+    CartController::class,
+    'xoagiamgiagiohang'
+]);
+Route::get('danhgia/{donhang}/{stt}',[
+    HomeController::class,
+    'danhgia'
+]);
+Route::post('danhgia/{donhang}/{stt}',[
+    HomeController::class,
+    'postdanhgia'
+]);
+Route::get('doisao/{sao}',[
+    HomeController::class,
+    'doisao'
+]);
+Route::get('login',[
+    HomeController::class,
+    'login'
+])->name('login');
+Route::get('dangki',[
+    HomeController::class,
+    'dangki'
+])->name('dangki');
+Route::post('dangki',[
+    HomeController::class,
+    'postdangki'
+]);
+Route::get('quenmatkhau',[
+    HomeController::class,
+    'quenmatkhau'
+]);
+Route::get('tinhtiengiamgia',[
+    HomeController::class,
+    'tinhtiengiamgia'
+]);
+Route::get('huygiamgia/{id}',[
+    HomeController::class,
+    'huygiamgia'
+]);
+Route::post('quenmatkhau',[
+    HomeController::class,
+    'postquenmatkhau'
+]);
+Route::get('datlaimatkhau/{id}',[
+    HomeController::class,
+    'datlaimatkhau'
+]);
+Route::post('datlaimatkhau/{id}',[
+    HomeController::class,
+    'postdatlaimatkhau'
+]);
+Route::post('dangnhap',[
+    HomeController::class,
+    'dangnhap'
+]);
+Route::get("sanphamgiamgia",[
+    HomeController::class,
+    'sanphamgiamgia'
+]);
+Route::get("sanphamgiamgiatrangsanpham",[
+    HomeController::class,
+    'sanphamgiamgiatrangsanpham'
+]);
+Route::get('dangxuat',[
+    HomeController::class,
+    'dangxuat'
+]);
+Route::get('/loginfacebook',[
+    HomeController::class,
+    'loginfacebook'
+]);
+Route::get('/callback',[
+    HomeController::class,
+    'callback'
+]);
+Route::get('thanhtoan',[
+    HomeController::class,
+    'thanhtoan'
+])->middleware('khachhang');
+Route::get('muangay/{id}',[
+    HomeController::class,
+    'muangay'
+])->middleware('khachhang');
+Route::get('muagiamgia/{id}',[
+    HomeController::class,
+    'muagiamgia'
+])->middleware('khachhang');
+Route::post('thanhtoan',[
+    HomeController::class,
+    'postthanhtoan'
+]);
+Route::get('sanpham/{trang}',[
+    HomeController::class,
+    'sanpham'
+]);
+Route::get('timkiemsanpham/{key}',[
+    HomeController::class,
+    'timkiemsanpham'
+]);
+Route::get('lichsu',[
+    HomeController::class,
+    'lichsu'
+]);
+Route::get('donhangdangcho',[
+    HomeController::class,
+    'donhangdangcho'
+])->middleware('khachhang');
+Route::get('chitietlichsu/{id}',[
+    HomeController::class,
+    'chitietlichsu'
+]);
+Route::get('baiviet/{stt}',[
+    HomeController::class,
+    'baiviet'
+]);
+Route::get('baiviet/{id}/{stt}',[
+    HomeController::class,
+    'baiviettheotheloai'
+]);
+Route::get('chitietbaiviet/{id}',[
+    HomeController::class,
+    'chitietbaiviet'
+]);
+//back-end là xử lí phía server
+
+Route::get('/admin/login',[
+    AdminController::class,
+    'login'
+]);
+Route::post('/admin/login',[
+    AdminController::class,
+    'postlogin'
+]);
+Route::get('/admin/quenmatkhau',[
+    AdminController::class,
+    'quenmatkhau'
+]);
+Route::post('/admin/quenmatkhau',[
+    AdminController::class,
+    'postquenmatkhau'
+]);
+Route::get('/admin/doimatkhau/{id}',[
+    AdminController::class,
+    'doimatkhau'
+]);
+Route::post('/admin/doimatkhau/{id}',[
+    AdminController::class,
+    'postdoimatkhau'
+]);
+Route::get('/admin/datlaimatkhau/{id}',[
+    AdminController::class,
+    'datlaimatkhau'
+]);
+Route::post('/admin/datlaimatkhau/{id}',[
+    AdminController::class,
+    'postdatlaimatkhau'
+]);
+Route::get('/admin/dangxuat',[
+    AdminController::class,
+    'dangxuat'
+]);
+Route::group(['prefix'=>'admin','middleware'=>'Login'],function(){
+    Route::get('/tongquan',[
+        AdminController::class,
+        'tongquan'
+    ]);
+    Route::group(['prefix'=>'giamgiasanpham'],function(){
+        Route::get('timgiasanpham/{id}',[
+            GiamGiaSanPhamController::class,
+            'timgiasanpham'
+        ]);
+        Route::get('danhsach',[
+            GiamGiaSanPhamController::class,
+            'danhsach'
+        ]);
+        Route::get('suahienthi/{id}',[
+            GiamGiaSanPhamController::class,
+            'suahienthi'
+        ]);
+        Route::get('xoa/{id}',[
+            GiamGiaSanPhamController::class,
+            'xoa'
+        ]);
+        Route::get('them',[
+            GiamGiaSanPhamController::class,
+            'them'
+        ]);
+        Route::post('them',[
+            GiamGiaSanPhamController::class,
+            'postthem'
+        ]);
+        Route::get('chinhsua/{id}',[
+            GiamGiaSanPhamController::class,
+            'chinhsua'
+        ]);
+        Route::post('chinhsua/{id}',[
+            GiamGiaSanPhamController::class,
+            'postchinhsua'
+        ]);
+        Route::get('timsanpham/{id}',[
+            GiamGiaSanPhamController::class,
+            'timsanpham'
+        ]);
+    });
+    Route::group(['prefix'=>'danhmuc'],function(){
+        Route::get('danhsach',[
+            DanhMucController::class,
+            'danhsach'
+        ]);
+        Route::get('suahienthi/{id}',[
+            DanhMucController::class,
+            'suahienthi'
+        ]);
+        Route::get('xoa/{id}',[
+            DanhMucController::class,
+            'xoa'
+        ]);
+        Route::get('them',[
+            DanhMucController::class,
+            'them'
+        ]);
+        Route::post('them',[
+            DanhMucController::class,
+            'postthem'
+        ]);
+        Route::get('chinhsua/{id}',[
+            DanhMucController::class,
+            'chinhsua'
+        ]);
+        Route::post('chinhsua/{id}',[
+            DanhMucController::class,
+            'postchinhsua'
+        ]);
+    });
+    Route::group(['prefix'=>'slide'],function(){
+        Route::get('danhsach',[
+            SlideController::class,
+            'danhsach'
+        ]);
+        Route::get('suahienthi/{id}',[
+            SlideController::class,
+            'suahienthi'
+        ]);
+        Route::get('xoa/{id}',[
+            SlideController::class,
+            'xoa'
+        ]);
+        Route::get('them',[
+            SlideController::class,
+            'them'
+        ]);
+        Route::post('them',[
+            SlideController::class,
+            'postthem'
+        ]);
+        Route::get('sua/{id}',[
+            SlideController::class,
+            'sua'
+        ]);
+        Route::post('sua/{id}',[
+            SlideController::class,
+            'postsua'
+        ]);
+    });
+    Route::group(['prefix'=>'baiviet'],function(){
+        Route::get('danhsach',[
+            BaiVietController::class,
+            'danhsach'
+        ]);
+        Route::get('suahienthi/{id}',[
+            BaiVietController::class,
+            'suahienthi'
+        ]);
+        Route::get('xoa/{id}',[
+            BaiVietController::class,
+            'xoa'
+        ]);
+        Route::get('them',[
+            BaiVietController::class,
+            'them'
+        ]);
+        Route::post('them',[
+            BaiVietController::class,
+            'postthem'
+        ]);
+        Route::get('sua/{id}',[
+            BaiVietController::class,
+            'sua'
+        ]);
+        Route::post('sua/{id}',[
+            BaiVietController::class,
+            'postsua'
+        ]);
+    });
+    Route::group(['prefix'=>'theloaibaiviet'],function(){
+        Route::get('danhsach',[
+            TheLoaiBaiVietController::class,
+            'danhsach'
+        ]);
+        Route::get('xoa/{id}',[
+            TheLoaiBaiVietController::class,
+            'xoa'
+        ]);
+        Route::get('them',[
+            TheLoaiBaiVietController::class,
+            'them'
+        ]);
+        Route::post('them',[
+            TheLoaiBaiVietController::class,
+            'postthem'
+        ]);
+        Route::get('sua/{id}',[
+            TheLoaiBaiVietController::class,
+            'sua'
+        ]);
+        Route::post('sua/{id}',[
+            TheLoaiBaiVietController::class,
+            'postsua'
+        ]);
+    });
+    Route::group(['prefix'=>'admin'],function(){
+        Route::get('danhsach',[
+            AdminController::class,
+            'danhsach'
+        ]);
+        Route::get('xoa/{id}',[
+            AdminController::class,
+            'xoa'
+        ]);
+        Route::get('sua/{id}',[
+            AdminController::class,
+            'sua'
+        ]);
+        Route::post('sua/{id}',[
+            AdminController::class,
+            'postsua'
+        ]);
+        Route::get('them',[
+            AdminController::class,
+            'them'
+        ]);
+        Route::post('them',[
+            AdminController::class,
+            'postthem'
+        ]);
+        Route::get('thongtin/{id}',[
+            AdminController::class,
+            'thongtin'
+        ]);
+        Route::post('thongtin/{id}',[
+            AdminController::class,
+            'postthongtin'
+        ]);
+    });
+    Route::group(['prefix'=>'khachhang'],function(){
+        Route::get('danhsach',[
+            KhachHangController::class,
+            'danhsach'
+        ]);
+        Route::get('xoa/{id}',[
+            KhachHangController::class,
+            'xoa'
+        ]);
+        Route::get('sua/{id}',[
+            KhachHangController::class,
+            'sua'
+        ]);
+        Route::post('sua/{id}',[
+            KhachHangController::class,
+            'postsua'
+        ]);
+        Route::get('them',[
+            KhachHangController::class,
+            'them'
+        ]);
+        Route::post('them',[
+            KhachHangController::class,
+            'postthem'
+        ]);
+        Route::get('thongtin/{id}',[
+            KhachHangController::class,
+            'thongtin'
+        ]);
+        Route::post('thongtin/{id}',[
+            KhachHangController::class,
+            'postthongtin'
+        ]);
+    });
+    Route::group(['prefix'=>'sanpham'],function(){
+        Route::get('danhsach',[
+            SanPhamController::class,
+            'danhsach'
+        ]);
+        Route::get('suatrangthai/{id}',[
+            SanPhamController::class,
+            'suatrangthai'
+        ]);
+        Route::get('xoa/{id}',[
+            SanPhamController::class,
+            'xoa'
+        ]);
+        Route::get('them',[
+            SanPhamController::class,
+            'them'
+        ]);
+        Route::post('them',[
+            SanPhamController::class,
+            'postthem'
+        ]);
+        Route::get('chinhsua/{id}',[
+            SanPhamController::class,
+            'chinhsua'
+        ]);
+        Route::post('chinhsua/{id}',[
+            SanPhamController::class,
+            'postchinhsua'
+        ]);
+    });
+    Route::group(['prefix'=>'chucvu'],function(){
+        Route::get('danhsach',[
+            ChucVuController::class,
+            'danhsach'
+        ]);
+        Route::get('xoa/{id}',[
+            ChucVuController::class,
+            'xoa'
+        ]);
+        Route::get('them',[
+            ChucVuController::class,
+            'them'
+        ]);
+        Route::post('them',[
+            ChucVuController::class,
+            'postthem'
+        ]);
+        Route::get('sua/{id}',[
+            ChucVuController::class,
+            'sua'
+        ]);
+        Route::post('sua/{id}',[
+            ChucVuController::class,
+            'postsua'
+        ]);
+    });
+    Route::group(['prefix'=>'donhang'],function(){
+        Route::get('danglam',[
+            DonHangController::class,
+            'danglam'
+        ]);
+        Route::get('danhsach',[
+            DonHangController::class,
+            'danhsach'
+        ]);
+        Route::get('chitietdonhang/{id}',[
+            DonHangController::class,
+            'chitietdonhang'
+        ]);
+        Route::get('xacnhandon/{madon}',[
+            DonHangController::class,
+            'xacnhandon'
+        ]);
+        Route::get('hoanthanh/{id}',[
+            DonHangController::class,
+            'hoanthanh'
+        ]);
+        Route::get('huydon/{id}',[
+            DonHangController::class,
+            'huydon'
+        ]);
+    });
+    
+    Route::group(['prefix'=>'khuyenmai'],function(){
+        Route::get('danhsach',[
+            KhuyenMaiController::class,
+            'danhsach'
+        ]);
+        Route::get('xoa/{id}',[
+            KhuyenMaiController::class,
+            'xoa'
+        ]);
+        Route::get('them',[
+            KhuyenMaiController::class,
+            'them'
+        ]);
+        Route::post('them',[
+            KhuyenMaiController::class,
+            'postthem'
+        ]);
+    });
+    Route::group(['prefix'=>'diachi'],function(){
+        Route::get('danhsach',[
+            DiaChiConTroller::class,
+            'danhsach'
+        ]);
+        Route::get('xoa/{id}',[
+            DiaChiConTroller::class,
+            'xoa'
+        ]);
+        Route::get('them',[
+            DiaChiConTroller::class,
+            'them'
+        ]);
+        Route::post('them',[
+            DiaChiConTroller::class,
+            'postthem'
+        ]);
+        Route::get('sua/{id}',[
+            DiaChiConTroller::class,
+            'sua'
+        ]);
+        Route::post('sua/{id}',[
+            DiaChiConTroller::class,
+            'postsua'
+        ]);
+    });
+    Route::group(['prefix'=>'danhgia'],function(){
+        Route::get('danhsach',[
+            SanPhamController::class,
+            'xemdanhgia'
+        ]);
+        Route::get('traloidanhgia/{id}',[
+            DanhGiaController::class,
+            'traloidanhgia'
+        ]);
+        Route::post('traloidanhgia/{id}',[
+            DanhGiaController::class,
+            'posttraloidanhgia'
+        ]);
+        Route::get('xoa/{id}',[
+            DanhGiaController::class,
+            'xoa'
+        ]);
+        Route::get('sua/{id}',[
+            DanhGiaController::class,
+            'sua'
+        ]);
+        Route::post('sua/{id}',[
+            DanhGiaController::class,
+            'postsua'
+        ]);
+    });
+    Route::get('thongke',[
+        AdminController::class,
+        'thongke'
+    ]);
+    Route::post('thongke',[
+        AdminController::class,
+        'postthongke'
+    ]);
+    Route::get('thongkedoanhthu',[
+        AdminController::class,
+        'thongkedoanhthu'
+    ]);
+});
+
+
